@@ -21,12 +21,12 @@ def main():
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="Enable verbose output"
     )
-    parser.add_argument("prompt", nargs="*", help="The prompt for the agent")
+    parser.add_argument("prompt", nargs="*", help="The initial prompt for the agent")
     args = parser.parse_args()
 
     working_dir = args.working_dir
     verbose = args.verbose
-    prompt = " ".join(args.prompt)
+    initial_prompt = " ".join(args.prompt)
 
     if not working_dir:
         print("Please specify working directory with -w or --working_dir")
@@ -34,7 +34,6 @@ def main():
 
     if verbose:
         print(f"Working directory: {working_dir}")
-        print(f"Prompt: {prompt}")
 
     gen_client = GeminiClient(
         api_key=GEMINI_API_KEY,
@@ -44,7 +43,21 @@ def main():
         verbose=verbose,
     )
 
-    gen_client.generate_content(prompt)
+    # If an initial prompt is provided, run it
+    if initial_prompt:
+        if verbose:
+            print(f"Initial prompt: {initial_prompt}")
+        gen_client.generate_content(initial_prompt)
+
+    # Enter interactive loop
+    try:
+        while True:
+            prompt = input("\nPrompt: ")
+            if not prompt.strip():
+                continue
+            gen_client.generate_content(prompt)
+    except KeyboardInterrupt:
+        print("\nExiting.")
 
 
 if __name__ == "__main__":
