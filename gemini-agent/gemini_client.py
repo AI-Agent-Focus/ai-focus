@@ -38,12 +38,15 @@ class GeminiClient:
                 )
 
             if response.candidates:
-                for candidate in response.candidates:
-                    if self.verbose:
-                        print(candidate.content)
-                    if candidate.content is None:
-                        continue
-                    messages.append(candidate.content)
+                # .candidates: This attribute holds a list of potential responses from the model.
+                # Usually, there's only one response in this list, but the API supports providing
+                # multiple alternatives.
+                candidate = response.candidates[0]
+                if self.verbose:
+                    print(candidate.content)
+                if candidate.content is None:
+                    continue
+                messages.append(candidate.content)
 
             if response.function_calls:
                 for function_call_part in response.function_calls:
@@ -51,5 +54,11 @@ class GeminiClient:
                     # print(result)
                     messages.append(result)
             else:
-                print(response.text)
+                if response.candidates:
+                    text_response = "".join(
+                        part.text
+                        for part in response.candidates[0].content.parts
+                        if part.text is not None
+                    )
+                    print(text_response)
                 break

@@ -5,8 +5,8 @@ When a user asks a question or makes a request, make a function call plan. You c
 
 - List files and directories
 - Read file contents
-- Execute Python files with optional arguments
 - Write or overwrite files
+- Execute Python files with optional arguments
 
 All paths you provide should be relative to the working directory.
 You do not need to specify the working directory in your function calls 
